@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import OpenAI from "openai";
 
 export async function POST(req: NextRequest) {
+  // Auth guard — only signed-in users can transcribe
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const formData = await req.formData();
     const audioFile = formData.get("audio") as File | null;

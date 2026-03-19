@@ -10,3 +10,9 @@ export interface Note extends NoteMetadata {
 }
 
 export type RecordState = "idle" | "recording" | "transcribing" | "error";
+
+export interface UserProfile {
+  name: string;
+  age: number;
+  profession: string;
+}

@@ -31,10 +31,11 @@ function formatDurationBadge(ms: number): string {
 
 interface NoteCardProps {
   note: NoteMetadata;
+  userId: string;
   onDelete: (id: string) => void;
 }
 
-export function NoteCard({ note, onDelete }: NoteCardProps) {
+export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -80,7 +81,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
       </div>
 
       {/* Audio Player */}
-      <AudioPlayer noteId={note.id} durationMs={note.durationMs} />
+      <AudioPlayer noteId={note.id} userId={userId} durationMs={note.durationMs} />
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-1 pt-1 border-t border-[#1C1C1F]">

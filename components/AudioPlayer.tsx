@@ -1,28 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { getAudio } from "@/lib/db";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
   const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
 interface AudioPlayerProps {
   noteId: string;
+  userId: string;
   durationMs: number;
 }
 
-export function AudioPlayer({ noteId, durationMs }: AudioPlayerProps) {
+export function AudioPlayer({ noteId, userId, durationMs }: AudioPlayerProps) {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(false);
-  const { isPlaying, currentTime, duration, togglePlay, seek } =
-    useAudioPlayer(blob);
+  const { isPlaying, currentTime, duration, togglePlay, seek } = useAudioPlayer(blob);
 
   const totalDuration = duration || durationMs / 1000;
   const progress = totalDuration > 0 ? currentTime / totalDuration : 0;
@@ -30,19 +28,12 @@ export function AudioPlayer({ noteId, durationMs }: AudioPlayerProps) {
   const handlePlayClick = async () => {
     if (!blob && !loading) {
       setLoading(true);
-      const audioBlob = await getAudio(noteId);
+      const audioBlob = await getAudio(userId, noteId);
       setBlob(audioBlob);
       setLoading(false);
     }
     togglePlay();
   };
-
-  // Auto-play once blob loads after clicking play
-  useEffect(() => {
-    if (blob && loading === false) {
-      // blob just loaded, will be handled by next click
-    }
-  }, [blob, loading]);
 
   return (
     <div className="flex items-center gap-3 mt-2">
@@ -85,9 +76,7 @@ export function AudioPlayer({ noteId, durationMs }: AudioPlayerProps) {
           }}
         />
         <span className="text-xs text-[#48484A] w-10 text-right flex-shrink-0">
-          {isPlaying || currentTime > 0
-            ? formatTime(currentTime)
-            : formatTime(totalDuration)}
+          {isPlaying || currentTime > 0 ? formatTime(currentTime) : formatTime(totalDuration)}
         </span>
       </div>
     </div>
