@@ -3,6 +3,7 @@ export interface NoteMetadata {
   transcript: string;
   createdAt: string; // ISO 8601
   durationMs: number;
+  audioUrl?: string;
 }
 
 export interface Note extends NoteMetadata {

@@ -31,11 +31,10 @@ function formatDurationBadge(ms: number): string {
 
 interface NoteCardProps {
   note: NoteMetadata;
-  userId: string;
   onDelete: (id: string) => void;
 }
 
-export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
+export function NoteCard({ note, onDelete }: NoteCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -48,26 +47,22 @@ export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
   const isLong = note.transcript.length > 200;
 
   return (
-    <div className="bg-[#141416] border border-[#2A2A2E] rounded-2xl p-4 flex flex-col gap-3 hover:border-[#3A3A3E] transition-colors duration-200">
+    <div className="bg-[#13141F] border border-[#252538] rounded-2xl p-4 flex flex-col gap-3 hover:border-[#353550] transition-colors duration-200">
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-xs text-[#8E8E93]">
+        <div className="flex items-center gap-2 text-xs text-[#8181A0]">
           <span>{formatDate(note.createdAt)}</span>
-          <span className="text-[#2A2A2E]">·</span>
+          <span className="text-[#252538]">·</span>
           <span>{formatTime(note.createdAt)}</span>
         </div>
-        <span className="text-xs bg-[#1C1C1F] text-[#48484A] border border-[#2A2A2E] rounded-full px-2 py-0.5 font-mono">
+        <span className="text-xs bg-[#18181F] text-[#4A4A65] border border-[#252538] rounded-full px-2 py-0.5 font-mono">
           {formatDurationBadge(note.durationMs)}
         </span>
       </div>
 
       {/* Transcript */}
-      <div className="text-sm text-[#F5F5F7] leading-relaxed">
-        <p
-          className={
-            !expanded && isLong ? "line-clamp-4" : ""
-          }
-        >
+      <div className="text-sm text-[#F1F1FA] leading-relaxed">
+        <p className={!expanded && isLong ? "line-clamp-4" : ""}>
           {note.transcript}
         </p>
         {isLong && (
@@ -81,14 +76,14 @@ export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
       </div>
 
       {/* Audio Player */}
-      <AudioPlayer noteId={note.id} userId={userId} durationMs={note.durationMs} />
+      <AudioPlayer audioUrl={note.audioUrl} durationMs={note.durationMs} />
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-1 pt-1 border-t border-[#1C1C1F]">
+      <div className="flex items-center justify-end gap-1 pt-1 border-t border-[#18181F]">
         <button
           onClick={handleCopy}
           title="Copy transcript"
-          className="p-1.5 rounded-lg hover:bg-[#1C1C1F] text-[#48484A] hover:text-[#8E8E93] transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[#18181F] text-[#4A4A65] hover:text-[#8181A0] transition-colors"
         >
           {copied ? (
             <svg className="w-4 h-4 text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -104,7 +99,7 @@ export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
         <button
           onClick={() => onDelete(note.id)}
           title="Delete note"
-          className="p-1.5 rounded-lg hover:bg-[#FF453A]/10 text-[#48484A] hover:text-[#FF453A] transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[#EF4444]/10 text-[#4A4A65] hover:text-[#EF4444] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <polyline points="3 6 5 6 21 6" />
