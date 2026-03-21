@@ -117,7 +117,7 @@ export function SearchTab({ notes, userId, onDelete, onSelectNote }: SearchTabPr
 
   const handleSelectNote = (note: NoteMetadata) => {
     setSelectedNote(note);
-    handleSelectNote(note);
+    onSelectNote?.(note);
   };
 
   if (selectedNote) {
