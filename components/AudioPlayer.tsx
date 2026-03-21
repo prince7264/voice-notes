@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { getAudio } from "@/lib/db";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
@@ -10,50 +11,48 @@ function formatTime(seconds: number): string {
 }
 
 interface AudioPlayerProps {
-  audioUrl?: string;
+  userId: string;
+  noteId: string;
   durationMs: number;
 }
 
-export function AudioPlayer({ audioUrl, durationMs }: AudioPlayerProps) {
+export function AudioPlayer({ userId, noteId, durationMs }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!audioUrl) return;
-    const audio = new Audio(audioUrl);
-    audioRef.current = audio;
-
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration);
-      setReady(true);
-    };
-    audio.ontimeupdate = () => setCurrentTime(audio.currentTime);
-    audio.onended = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    };
-
+    let cancelled = false;
+    async function load() {
+      const blob = await getAudio(userId, noteId);
+      if (!blob || cancelled) return;
+      const url = URL.createObjectURL(blob);
+      objectUrlRef.current = url;
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onloadedmetadata = () => { if (!cancelled) { setDuration(audio.duration); setReady(true); } };
+      audio.ontimeupdate = () => { if (!cancelled) setCurrentTime(audio.currentTime); };
+      audio.onended = () => { if (!cancelled) { setIsPlaying(false); setCurrentTime(0); } };
+    }
+    load();
     return () => {
-      audio.pause();
+      cancelled = true;
+      audioRef.current?.pause();
       audioRef.current = null;
+      if (objectUrlRef.current) { URL.revokeObjectURL(objectUrlRef.current); objectUrlRef.current = null; }
     };
-  }, [audioUrl]);
+  }, [userId, noteId]);
 
   const totalDuration = duration || durationMs / 1000;
   const progress = totalDuration > 0 ? currentTime / totalDuration : 0;
 
   const togglePlay = async () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      await audioRef.current.play();
-      setIsPlaying(true);
-    }
+    if (!audioRef.current || !ready) return;
+    if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
+    else { await audioRef.current.play(); setIsPlaying(true); }
   };
 
   const seek = (value: number) => {
@@ -63,27 +62,26 @@ export function AudioPlayer({ audioUrl, durationMs }: AudioPlayerProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 mt-1">
+    <div className="flex items-center gap-3">
       {/* Play/Pause */}
       <button
         onClick={togglePlay}
-        disabled={!audioUrl || (!ready && !isPlaying)}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-[#252538] hover:bg-[#2E2E46] transition-colors flex-shrink-0 disabled:opacity-40"
+        disabled={!ready}
+        className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+          ready
+            ? isPlaying
+              ? "bg-primary text-on-primary shadow-md"
+              : "bg-surface-container-high text-primary hover:bg-primary/10"
+            : "bg-surface-container text-outline opacity-50 cursor-not-allowed"
+        }`}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
-        {isPlaying ? (
-          <svg className="w-4 h-4 text-[#6366F1]" fill="currentColor" viewBox="0 0 24 24">
-            <rect x="6" y="4" width="4" height="16" rx="1" />
-            <rect x="14" y="4" width="4" height="16" rx="1" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4 text-[#8181A0]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        )}
+        <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: isPlaying ? "'FILL' 1" : "'FILL' 1" }}>
+          {isPlaying ? "pause" : "play_arrow"}
+        </span>
       </button>
 
-      {/* Scrubber */}
+      {/* Progress bar */}
       <div className="flex-1 flex items-center gap-2">
         <input
           type="range"
@@ -92,15 +90,13 @@ export function AudioPlayer({ audioUrl, durationMs }: AudioPlayerProps) {
           step={0.01}
           value={currentTime}
           onChange={(e) => seek(parseFloat(e.target.value))}
-          className="flex-1 h-1 appearance-none rounded-full cursor-pointer"
+          className="flex-1 cursor-pointer"
           style={{
-            background: `linear-gradient(to right, #6366F1 ${progress * 100}%, #252538 ${progress * 100}%)`,
+            background: `linear-gradient(to right, #182442 ${progress * 100}%, #e6e8e9 ${progress * 100}%)`,
           }}
         />
-        <span className="text-xs text-[#4A4A65] w-10 text-right flex-shrink-0">
-          {isPlaying || currentTime > 0
-            ? formatTime(currentTime)
-            : formatTime(totalDuration)}
+        <span className="text-xs font-mono font-bold text-on-surface-variant w-9 text-right flex-shrink-0">
+          {isPlaying || currentTime > 0 ? formatTime(currentTime) : formatTime(totalDuration)}
         </span>
       </div>
     </div>

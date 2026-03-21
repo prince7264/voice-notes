@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { NoteMetadata } from "@/types";
 import { saveNote, getNotes, deleteNote as deleteNoteFromDb } from "@/lib/firestore";
-import { uploadAudio, deleteAudio } from "@/lib/firebaseStorage";
+import { saveAudio, deleteAudio } from "@/lib/db";
 
 export function useNotes(userId: string) {
   const [notes, setNotes] = useState<NoteMetadata[]>([]);
@@ -24,13 +24,14 @@ export function useNotes(userId: string) {
       durationMs: number;
     }): Promise<NoteMetadata> => {
       const id = crypto.randomUUID();
-      const audioUrl = await uploadAudio(userId, id, params.blob);
+      // Save audio locally in IndexedDB
+      await saveAudio(userId, id, params.blob);
+      // Save metadata to Firestore (cloud)
       const note: NoteMetadata = {
         id,
         transcript: params.transcript,
         createdAt: new Date().toISOString(),
         durationMs: params.durationMs,
-        audioUrl,
       };
       await saveNote(userId, note);
       setNotes((prev) => [note, ...prev]);

@@ -5,23 +5,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 const PROFESSIONS = [
-  "Developer / Engineer",
-  "Designer",
-  "Product / UX",
-  "Marketing",
-  "Healthcare",
-  "Finance",
-  "Legal",
-  "Education",
-  "Creative",
-  "Student",
-  "Other",
+  "Developer / Engineer", "Designer", "Product / UX", "Marketing",
+  "Healthcare", "Finance", "Legal", "Education", "Creative", "Student", "Other",
 ];
 
 export default function OnboardingPage() {
   const { user, updateProfile, refreshProfile } = useAuth();
   const router = useRouter();
-
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [profession, setProfession] = useState("");
@@ -36,23 +26,13 @@ export default function OnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    const finalProfession =
-      profession === "Other" ? otherProfession.trim() : profession;
-
+    const finalProfession = profession === "Other" ? otherProfession.trim() : profession;
     if (!name.trim()) return setError("Please enter your name.");
-    if (!age || parseInt(age) < 13 || parseInt(age) > 100)
-      return setError("Please enter a valid age (13–100).");
+    if (!age || parseInt(age) < 13 || parseInt(age) > 100) return setError("Please enter a valid age (13–100).");
     if (!finalProfession) return setError("Please select your profession.");
-
     setSaving(true);
     try {
-      await updateProfile({
-        name: name.trim(),
-        age: parseInt(age),
-        profession: finalProfession,
-        onboardingComplete: true,
-      });
+      await updateProfile({ name: name.trim(), age: parseInt(age), profession: finalProfession, onboardingComplete: true });
       await refreshProfile();
       router.push("/");
     } catch {
@@ -62,116 +42,134 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090F] flex flex-col items-center justify-center px-6 py-12">
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-[#6366F1]/15 border border-[#6366F1]/30 flex items-center justify-center mx-auto mb-5">
-          <svg className="w-7 h-7 text-[#6366F1]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v7a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zm-1 17.93V22h2v-1.07A8.001 8.001 0 0 0 20 13h-2a6 6 0 0 1-12 0H4a8.001 8.001 0 0 0 7 7.93z" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold text-[#F1F1FA] mb-1">Welcome aboard!</h1>
-        <p className="text-sm text-[#8181A0]">Just a few details to personalise your experience</p>
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-between px-6 py-12 md:py-24 relative overflow-hidden max-w-screen-xl mx-auto">
+      {/* Background glows */}
+      <div className="fixed inset-0 -z-10 pointer-events-none opacity-40">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tertiary-fixed/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-tertiary-fixed/20 rounded-full blur-[100px]" />
       </div>
 
-      {/* Form Card */}
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm bg-[#13141F] border border-[#252538] rounded-3xl p-6 flex flex-col gap-5 shadow-xl"
-      >
-        {/* Full Name */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-[#8181A0] uppercase tracking-wider">
-            Full Name
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            className="bg-[#18181F] border border-[#252538] rounded-xl px-4 py-3 text-sm text-[#F1F1FA] placeholder-[#4A4A65] focus:outline-none focus:border-[#6366F1] transition-colors"
-          />
+      {/* Top brand */}
+      <header className="w-full flex justify-center mb-8">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <span className="material-symbols-outlined text-on-primary text-lg">graphic_eq</span>
+          </div>
+          <span className="font-extrabold text-xl tracking-tight text-primary" style={{ fontFamily: "Manrope, sans-serif" }}>Bolkar Notes</span>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl text-center">
+        <div className="relative mb-16">
+          <div className="absolute -inset-10 bg-tertiary-fixed/20 blur-3xl rounded-full" />
+          <div className="absolute -inset-20 bg-primary-fixed/10 blur-[80px] rounded-full" />
+          <div className="relative w-48 h-48 md:w-64 md:h-64 bg-surface-container-lowest rounded-3xl shadow-ambient flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent" />
+            <div className="flex items-center gap-1.5 h-16">
+              {[6, 12, 20, 24, 16, 8].map((h, i) => (
+                <div key={i} className="w-1.5 rounded-full bg-primary-container" style={{ height: `${h}px`, opacity: 0.2 + i * 0.12 }} />
+              ))}
+            </div>
+            <div className="absolute top-6 left-6 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+              <span className="material-symbols-outlined text-on-surface-variant text-sm">mic</span>
+            </div>
+          </div>
         </div>
 
-        {/* Age */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-[#8181A0] uppercase tracking-wider">
-            Age
-          </label>
-          <input
-            type="number"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            placeholder="Your age"
-            min={13}
-            max={100}
-            className="bg-[#18181F] border border-[#252538] rounded-xl px-4 py-3 text-sm text-[#F1F1FA] placeholder-[#4A4A65] focus:outline-none focus:border-[#6366F1] transition-colors"
-          />
-        </div>
-
-        {/* Profession */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-[#8181A0] uppercase tracking-wider">
-            Profession
-          </label>
-          <select
-            value={profession}
-            onChange={(e) => setProfession(e.target.value)}
-            className="bg-[#18181F] border border-[#252538] rounded-xl px-4 py-3 text-sm text-[#F1F1FA] focus:outline-none focus:border-[#6366F1] transition-colors appearance-none cursor-pointer"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%238181A0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\")",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right 14px center",
-            }}
+        <div className="space-y-6 px-4">
+          <h1
+            className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] text-editorial-gradient"
+            style={{ fontFamily: "Manrope, sans-serif" }}
           >
-            <option value="" disabled>
-              Select your profession
-            </option>
-            {PROFESSIONS.map((p) => (
-              <option key={p} value={p} className="bg-[#18181F]">
-                {p}
-              </option>
-            ))}
-          </select>
+            Capture your thoughts,<br />instantly transcribed.
+          </h1>
+          <p className="text-on-surface-variant text-lg md:text-xl font-normal max-w-md mx-auto leading-relaxed">
+            Bolkar Notes turns your voice memos into clear, organized notes. The professional way to never lose an idea.
+          </p>
+        </div>
+      </section>
 
-          {profession === "Other" && (
+      {/* Form */}
+      <div className="w-full max-w-sm mt-12 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Full Name</label>
             <input
               type="text"
-              value={otherProfession}
-              onChange={(e) => setOtherProfession(e.target.value)}
-              placeholder="Please specify"
-              className="bg-[#18181F] border border-[#252538] rounded-xl px-4 py-3 text-sm text-[#F1F1FA] placeholder-[#4A4A65] focus:outline-none focus:border-[#6366F1] transition-colors"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="w-full h-14 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/40 outline-none"
             />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Age</label>
+            <input
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              placeholder="Your age"
+              min={13} max={100}
+              className="w-full h-14 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/40 outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Profession</label>
+            <div className="relative">
+              <select
+                value={profession}
+                onChange={(e) => setProfession(e.target.value)}
+                className="w-full h-14 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer pr-12 outline-none"
+              >
+                <option value="" disabled>Select your profession</option>
+                {PROFESSIONS.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+            </div>
+            {profession === "Other" && (
+              <input
+                type="text"
+                value={otherProfession}
+                onChange={(e) => setOtherProfession(e.target.value)}
+                placeholder="Please specify"
+                className="w-full h-14 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/40 outline-none"
+              />
+            )}
+          </div>
+
+          {error && (
+            <div className="px-4 py-3 rounded-2xl bg-error-container/50 text-on-error-container text-sm text-center">
+              {error}
+            </div>
           )}
-        </div>
 
-        {/* Error */}
-        {error && (
-          <p className="text-xs text-[#EF4444] bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-xl px-3 py-2.5">
-            {error}
-          </p>
-        )}
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full bg-[#6366F1] hover:bg-[#5153D8] active:bg-[#4547C4] disabled:opacity-60 text-white font-semibold text-sm py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 mt-1"
-        >
-          {saving ? (
-            <>
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full h-14 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold text-base rounded-[1.5rem] shadow-xl shadow-primary/10 hover:opacity-90 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-60 mt-2"
+            style={{ fontFamily: "Manrope, sans-serif" }}
+          >
+            {saving ? (
+              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
-              Setting up…
-            </>
-          ) : (
-            "Get Started →"
-          )}
-        </button>
-      </form>
+            ) : (
+              <>
+                Get Started
+                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        <div className="text-center pt-4">
+          <p className="font-label text-xs tracking-wide text-on-surface-variant uppercase">Designed for clarity</p>
+        </div>
+      </div>
     </div>
   );
 }

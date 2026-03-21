@@ -1,17 +1,38 @@
 export function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-      <div className="w-20 h-20 rounded-full bg-[#141416] border border-[#2A2A2E] flex items-center justify-center">
-        <svg className="w-9 h-9 text-[#2A2A2E]" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v7a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zm-1 17.93V22h2v-1.07A8.001 8.001 0 0 0 20 13h-2a6 6 0 0 1-12 0H4a8.001 8.001 0 0 0 7 7.93z" />
-        </svg>
+    <div className="flex flex-col items-center justify-center gap-6 py-24 text-center px-6">
+      {/* Mic icon with atmospheric glow */}
+      <div className="relative">
+        <div className="absolute -inset-8 bg-tertiary-fixed/20 blur-3xl rounded-full" />
+        <div className="absolute -inset-16 bg-primary-fixed/8 blur-[60px] rounded-full" />
+        <div className="relative w-32 h-32 bg-surface-container-lowest rounded-3xl shadow-ambient flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
+          {/* Waveform bars */}
+          <div className="flex items-center gap-1.5 h-12 relative z-10">
+            {[6, 12, 20, 24, 16, 8].map((h, i) => (
+              <div
+                key={i}
+                className="w-1.5 rounded-full bg-primary-container"
+                style={{ height: `${h}px`, opacity: 0.25 + i * 0.1 }}
+              />
+            ))}
+          </div>
+          <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+            <span className="material-symbols-outlined text-on-surface-variant text-sm">mic</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <p className="text-[#F5F5F7] font-medium">No notes yet</p>
-        <p className="text-sm text-[#48484A] mt-1">
-          Hold the button below to capture your first thought
+
+      <div className="space-y-2">
+        <p className="text-xl font-extrabold text-on-surface" style={{ fontFamily: "Manrope, sans-serif" }}>
+          No notes yet
+        </p>
+        <p className="text-sm text-on-surface-variant leading-relaxed max-w-[220px] mx-auto">
+          Tap Record to capture your first voice note — instantly transcribed.
         </p>
       </div>
+
+      <span className="material-symbols-outlined text-outline-variant animate-bounce">arrow_downward</span>
     </div>
   );
 }

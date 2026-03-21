@@ -7,10 +7,15 @@ export async function transcribeAudio(blob: Blob): Promise<string> {
     body: formData,
   });
 
+  const data = await res.json() as { transcript?: string; error?: string; detail?: string };
+
   if (!res.ok) {
-    throw new Error(`Transcription failed: ${res.statusText}`);
+    throw new Error(data.detail || data.error || `Transcription failed: ${res.status}`);
   }
 
-  const data = (await res.json()) as { transcript: string };
+  if (!data.transcript) {
+    throw new Error("No transcript returned");
+  }
+
   return data.transcript;
 }
