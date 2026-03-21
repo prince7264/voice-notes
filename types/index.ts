@@ -4,6 +4,7 @@ export interface NoteMetadata {
   createdAt: string; // ISO 8601
   durationMs: number;
   audioUrl?: string;
+  category?: string;
 }
 
 export interface Note extends NoteMetadata {

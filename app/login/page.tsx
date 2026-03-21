@@ -29,30 +29,30 @@ export default function LoginPage() {
       <main className="w-full max-w-[440px] z-10 flex flex-col items-center scale-in">
         {/* Brand header */}
         <header className="mb-12 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-container mb-5 shadow-lg">
-            <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48" }}>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-primary-container mb-6 shadow-xl">
+            <span className="material-symbols-outlined text-on-primary text-5xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48" }}>
               mic
             </span>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>Bolkar</h1>
-          <p className="text-on-surface-variant font-medium tracking-wide text-sm">The Auditory Sanctuary</p>
+          <h1 className="text-5xl font-extrabold tracking-tighter text-on-surface mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>Bolkar</h1>
+          <p className="text-on-surface-variant font-medium tracking-wide text-sm">Your Voice, Transcribed Instantly</p>
         </header>
 
         {/* Auth card */}
-        <div className="w-full bg-surface-container-low/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-xl border border-white/40 flex flex-col gap-8">
+        <div className="w-full bg-surface-container-low/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-xl border border-outline-variant/20 flex flex-col gap-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-on-surface mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>Welcome Back</h2>
+            <h2 className="text-2xl font-bold text-on-surface mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>Welcome</h2>
             <p className="text-on-surface-variant text-sm">Focus on the sound, we&apos;ll handle the notes.</p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="px-4 py-3 rounded-2xl bg-error-container/60 text-on-error-container text-sm text-center">
+            <div className="px-4 py-3 rounded-2xl bg-error-container/60 text-on-error-container text-sm text-center font-medium">
               {error}
             </div>
           )}
 
-          {/* Google Sign In */}
+          {/* Google Sign In — Primary CTA */}
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
@@ -74,50 +74,13 @@ export default function LoginPage() {
             <span>{loading ? "Signing in…" : "Continue with Google"}</span>
           </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 py-2">
-            <div className="h-[1px] flex-1 bg-outline-variant/40" />
-            <span className="text-on-surface-variant text-[11px] font-bold uppercase tracking-[0.1em]">or continue with email</span>
-            <div className="h-[1px] flex-1 bg-outline-variant/40" />
-          </div>
-
-          {/* Email Form */}
-          <form className="flex flex-col gap-5" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12px] font-bold text-on-surface-variant px-1 tracking-wider uppercase">Email Address</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full h-14 bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/40 outline-none"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12px] font-bold text-on-surface-variant px-1 tracking-wider uppercase">Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="w-full h-14 bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/40 outline-none"
-              />
-            </div>
-            <div className="text-right">
-              <button type="button" className="text-primary font-semibold text-sm hover:underline transition-all">
-                Forgot password?
-              </button>
-            </div>
-            <button
-              type="button"
-              className="w-full h-14 bg-primary text-on-primary rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:brightness-110 active:scale-95 transition-all mt-2"
-            >
-              Sign In
-            </button>
-          </form>
-
           {/* Feature list */}
-          <div className="space-y-3">
+          <div className="space-y-3 pt-2">
             {[
               { icon: "mic", text: "Record voice notes in seconds" },
               { icon: "auto_awesome", text: "Auto-transcribed with AI" },
-              { icon: "lock", text: "Private and secure to your account" },
+              { icon: "cloud_sync", text: "Synced securely across devices" },
+              { icon: "lock", text: "Private and encrypted to your account" },
             ].map(({ icon, text }) => (
               <div key={text} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-xl bg-surface-container-high flex items-center justify-center flex-shrink-0">
@@ -129,16 +92,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <footer className="mt-10 text-center flex flex-col gap-6">
-          <p className="text-on-surface-variant text-sm">
-            Don&apos;t have an account?{" "}
-            <button className="text-primary font-semibold hover:underline">Create account</button>
+        <footer className="mt-10 text-center">
+          <p className="text-on-surface-variant/60 text-xs">
+            By signing in, you agree to our terms of service and privacy policy.
           </p>
-          <div className="flex items-center justify-center gap-6">
-            <button className="text-on-surface-variant text-[11px] font-bold tracking-widest uppercase hover:text-primary transition-colors">Privacy Policy</button>
-            <div className="w-1 h-1 bg-outline-variant rounded-full" />
-            <button className="text-on-surface-variant text-[11px] font-bold tracking-widest uppercase hover:text-primary transition-colors">Terms of Service</button>
-          </div>
         </footer>
       </main>
 

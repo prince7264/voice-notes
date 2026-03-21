@@ -218,11 +218,38 @@ export function RecordTab({ onNoteCreated, onClose }: RecordTabProps) {
       {/* Contextual Controls — Delete & Pause (bottom) */}
       {isRecording && (
         <div className="fixed bottom-32 left-0 right-0 z-30 flex items-center justify-center gap-6 fade-in">
-          <button className="bg-surface-container-highest/90 backdrop-blur-xl border border-white/50 rounded-2xl p-4 hover:bg-error-container/30 transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-on-surface-variant text-2xl">delete</span>
+          <button
+            onClick={async () => {
+              try { await stopRecording(); } catch {}
+              setRecordState("idle");
+              if (onClose) onClose();
+            }}
+            className="bg-surface-container-highest/90 backdrop-blur-xl border border-white/50 rounded-2xl p-4 hover:bg-error-container/30 transition-colors active:scale-95"
+          >
+            <span className="material-symbols-outlined text-error text-2xl">delete</span>
+            <span className="block text-[10px] font-bold text-error mt-1">Discard</span>
           </button>
-          <button className="bg-surface-container-highest/90 backdrop-blur-xl border border-white/50 rounded-2xl p-4 hover:bg-primary-container/30 transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-on-surface-variant text-2xl">pause</span>
+          <button
+            onClick={async () => {
+              // Stop recording and save immediately
+              try {
+                const { blob, durationMs } = await stopRecording();
+                if (durationMs < 500) { setRecordState("idle"); return; }
+                setRecordState("transcribing");
+                let transcript = "";
+                try { transcript = await transcribeAudio(blob); }
+                catch (e) { transcript = `[Transcription error: ${e instanceof Error ? e.message : String(e)}]`; }
+                const metadata: NoteMetadata = { id: crypto.randomUUID(), transcript, createdAt: new Date().toISOString(), durationMs };
+                await onNoteCreated(metadata, blob);
+                setRecordState("idle");
+              } catch {
+                setRecordState("idle");
+              }
+            }}
+            className="bg-surface-container-highest/90 backdrop-blur-xl border border-white/50 rounded-2xl p-4 hover:bg-primary-container/30 transition-colors active:scale-95"
+          >
+            <span className="material-symbols-outlined text-primary text-2xl">stop_circle</span>
+            <span className="block text-[10px] font-bold text-primary mt-1">Save</span>
           </button>
         </div>
       )}

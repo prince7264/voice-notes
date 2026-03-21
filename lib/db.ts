@@ -42,3 +42,28 @@ export async function deleteAudio(userId: string, noteId: string): Promise<void>
     tx.onerror = () => reject(tx.error);
   });
 }
+
+export async function getStorageUsage(): Promise<{ usedBytes: number; count: number }> {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.openCursor();
+    let usedBytes = 0;
+    let count = 0;
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) {
+        const blob = cursor.value as Blob;
+        if (blob && blob.size) {
+          usedBytes += blob.size;
+          count++;
+        }
+        cursor.continue();
+      } else {
+        resolve({ usedBytes, count });
+      }
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
