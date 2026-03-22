@@ -13,7 +13,7 @@ import { ProfileTab } from "@/components/ProfileTab";
 export default function Home() {
   const { user } = useAuth();
   const userId = user?.uid ?? "";
-  const { notes, loading, createNote, deleteNote } = useNotes(userId);
+  const { notes, loading, createNote, deleteNote, generateAIInsights } = useNotes(userId);
   const [activeTab, setActiveTab] = useState<TabName>("home");
 
   const handleNoteCreated = useCallback(
@@ -40,6 +40,7 @@ export default function Home() {
             userId={userId}
             onDelete={deleteNote}
             onGoToRecord={() => setActiveTab("record")}
+            onGenerateInsights={generateAIInsights}
           />
         </div>
         <div
@@ -52,7 +53,7 @@ export default function Home() {
           />
         </div>
         <div className={activeTab === "search" ? "block h-full" : "hidden"}>
-          <SearchTab notes={notes} userId={userId} onDelete={deleteNote} />
+          <SearchTab notes={notes} userId={userId} onDelete={deleteNote} onGenerateInsights={generateAIInsights} />
         </div>
         <div className={activeTab === "settings" ? "block h-full" : "hidden"}>
           <ProfileTab />

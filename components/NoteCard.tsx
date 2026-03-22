@@ -77,6 +77,14 @@ export function NoteCard({ note, userId, onDelete }: NoteCardProps) {
         </span>
       </div>
 
+      {/* AI Summary Preview */}
+      {note.summary && (
+        <div className="flex items-start gap-2 mb-3 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/10">
+          <span className="material-symbols-outlined text-primary text-sm mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+          <p className="text-xs text-primary/80 leading-relaxed line-clamp-2 italic">{note.summary}</p>
+        </div>
+      )}
+
       {/* Transcript */}
       <div className="mb-4">
         <p className={`text-on-surface-variant leading-relaxed text-sm ${!expanded && isLong ? "line-clamp-3" : ""}`}>

@@ -58,9 +58,10 @@ interface HomeTabProps {
   userId: string;
   onDelete: (id: string) => void;
   onGoToRecord?: () => void;
+  onGenerateInsights?: (noteId: string, transcript: string) => void;
 }
 
-export function HomeTab({ notes, loading, userId, onDelete, onGoToRecord }: HomeTabProps) {
+export function HomeTab({ notes, loading, userId, onDelete, onGoToRecord, onGenerateInsights }: HomeTabProps) {
   const { user, profile } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedNote, setSelectedNote] = useState<NoteMetadata | null>(null);
@@ -110,6 +111,7 @@ export function HomeTab({ notes, loading, userId, onDelete, onGoToRecord }: Home
         onBack={() => setSelectedNote(null)}
         onDelete={onDelete}
         onSelectNote={setSelectedNote}
+        onGenerateInsights={onGenerateInsights}
       />
     );
   }
@@ -218,7 +220,14 @@ export function HomeTab({ notes, loading, userId, onDelete, onGoToRecord }: Home
                       <h3 className="text-2xl font-bold text-on-surface mb-3 group-hover:text-primary transition-colors" style={{ fontFamily: "Manrope, sans-serif" }}>
                         {note.transcript.slice(0, 80)}{note.transcript.length > 80 ? "…" : ""}
                       </h3>
-                      <p className="text-on-surface-variant text-sm leading-relaxed line-clamp-3 mb-4">{note.transcript}</p>
+                      {note.summary ? (
+                        <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/10">
+                          <span className="material-symbols-outlined text-primary text-sm mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                          <p className="text-sm text-primary/80 leading-relaxed line-clamp-2 italic">{note.summary}</p>
+                        </div>
+                      ) : (
+                        <p className="text-on-surface-variant text-sm leading-relaxed line-clamp-3 mb-4">{note.transcript}</p>
+                      )}
                       <div className="bg-surface-container-low rounded-xl px-3 py-2.5">
                         <AudioPlayer userId={userId} noteId={note.id} durationMs={note.durationMs} />
                       </div>

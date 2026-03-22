@@ -1,3 +1,10 @@
+export interface NoteInsights {
+  actionItems: string[];
+  keyTopics: string[];
+  sentiment: "positive" | "neutral" | "negative" | "mixed";
+  tags: string[];
+}
+
 export interface NoteMetadata {
   id: string;
   transcript: string;
@@ -5,6 +12,9 @@ export interface NoteMetadata {
   durationMs: number;
   audioUrl?: string;
   category?: string;
+  summary?: string;
+  insights?: NoteInsights;
+  aiStatus?: "pending" | "completed" | "failed";
 }
 
 export interface Note extends NoteMetadata {

@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { NoteMetadata } from "@/types";
@@ -43,6 +44,10 @@ export async function getNotes(userId: string): Promise<NoteMetadata[]> {
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data() as NoteMetadata);
+}
+
+export async function updateNoteFields(userId: string, noteId: string, fields: Partial<NoteMetadata>) {
+  await updateDoc(doc(db, "users", userId, "notes", noteId), fields);
 }
 
 export async function deleteNote(userId: string, noteId: string) {

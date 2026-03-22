@@ -49,9 +49,10 @@ interface SearchTabProps {
   userId: string;
   onDelete: (id: string) => void;
   onSelectNote?: (note: NoteMetadata) => void;
+  onGenerateInsights?: (noteId: string, transcript: string) => void;
 }
 
-export function SearchTab({ notes, userId, onDelete, onSelectNote }: SearchTabProps) {
+export function SearchTab({ notes, userId, onDelete, onSelectNote, onGenerateInsights }: SearchTabProps) {
   const { user, profile } = useAuth();
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(0);
@@ -129,6 +130,7 @@ export function SearchTab({ notes, userId, onDelete, onSelectNote }: SearchTabPr
         onBack={() => setSelectedNote(null)}
         onDelete={(id) => { onDelete(id); setSelectedNote(null); }}
         onSelectNote={setSelectedNote}
+        onGenerateInsights={onGenerateInsights}
       />
     );
   }
